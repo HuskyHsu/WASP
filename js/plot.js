@@ -75,8 +75,7 @@
 			return y(d[site])
 		});
 
-		this.path
-			.attr("d", this.line);
+		this.path.attr("d", this.line);
 
 		this.axis.selectAll("g.axis.axis--y").call(d3.axisLeft(y));
 
