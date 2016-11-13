@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>Readfile</title>
+
+	<style>
+
+	.axis text {
+		font: 10px sans-serif;
+	}
+
+	.axis .title {
+		font-weight: bold;
+		text-anchor: end;
+	}
+
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+	}
+
+	.x.axis path {
+		display: none;
+	}
+
+	.line {
+		fill: none;
+		stroke: steelblue;
+		stroke-width: 1.5px;
+	}
+
+	</style>
+	</head>
+	
+	<body>
+		<input type="file" name="file"> <br/>
+		<p name="Text1">模擬天數：＿＿天</p>
+		<label>繪製第幾模擬點</label>
+		<select id="line">
+			<option value ="1">1</option>
+			<option value ="11">11</option>
+			<option value="21">21</option>
+			<option value="31">31</option>
+			<option value="41">41</option>
+		</select>
+
+		<input id="plotGo" type="button" value="繪圖"> <br/>
+
+		<svg id="plot"></svg>
+
+  		<script src="./js/lib/jquery-3.1.1.min.js"></script>
+  		<script src="./js/lib/d3.min.js"></script>
+		<script src="./js/readfile.js"></script>
+		<script src="./js/plot.js"></script>
+	</body>
+</html>
