@@ -1,13 +1,13 @@
 (function(window, document, undefined) {
 
     //WMTS設定
-    var streets = L.tileLayer('http://mt{s}.google.com/vt/x={x}&y={y}&z={z}&hl=zh-TW', {
+    var streets = L.tileLayer('https://mt{s}.google.com/vt/x={x}&y={y}&z={z}&hl=zh-TW', {
         id: 'streets',
         subdomains: "012",
         attribution: 'Map data: &copy; Google'
     });
 
-    var topography = L.tileLayer('http://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+    var topography = L.tileLayer('https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
         id: 'topography',
         subdomains: "012",
         attribution: 'Map data: &copy; Google'
@@ -174,7 +174,6 @@
         };
 
         fReader.readAsText(file);
-
     };
 
     function onEachFeature(feature, layer) {
