@@ -9,7 +9,7 @@
 			var type = file.type;
 
 			//NO CSV!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			if (!type.match(/application\/vnd.ms-excel|application\/csv/))
+			if (!type.match(/application\/vnd.ms-excel|application\/csv|text\/csv/))
 				return;
 
 			var fReader = new FileReader();
