@@ -111,17 +111,33 @@
 
             var input = document.createElement('input');
             input.type = 'range';
-            input.name = 'slider';
+            input.name = 'time';
+            input.min = '0';
+            input.value = '0';
+            input.max = data.length - 1;
 
-            input.style.width = '100px';
+            input.style.width = '147px';
             input.style.height = '36px';
 
-            //input.onchange = ;
+            input.addEventListener('input', function(){
+
+                var index = this.value;
+                //var col = d3.scaleLinear()
+                //    .domain([0, d3.max(data[index], function(d){return d.S})])
+                //    .range([0, 255]);
+
+
+                site.attr("fill", function(d, i) { 
+                     
+                     // "rgb(" + Math.floor(col(data[index][i].S)) + ",0,0)"
+                    return d3.interpolateViridis(col(data[index][i].S))
+                });
+            }, false);
 
             container.appendChild(input);
 
             container.style.backgroundColor = 'white';
-            container.style.width = '100px';
+            container.style.width = '150px';
             container.style.height = '36px';
 
             //container.onclick = function() {
@@ -135,7 +151,7 @@
     });
 
     map.addControl(new readFileControl());
-    map.addControl(new sliderControl());
+
 
     //讀檔
     function readfile() {
@@ -166,7 +182,7 @@
 
                 var sitegrid = [];
                 for (var i = 1; i <= head; i++){
-                        sitegrid.push({S: tem[i + head], W: tem[i]});
+                    sitegrid.push({S: tem[i + head], W: tem[i]});
                 }
 
                 sitegrid.time = tem[0];
@@ -180,6 +196,7 @@
             window.data = data;
 
             callD3();
+            map.addControl(new sliderControl());
 
         };
 
@@ -197,12 +214,18 @@
         var ymm = d3.extent(point, function(d){ return d[1]});
         var xmm = d3.extent(point, function(d){ return d[0]});
 
-        var site = g.selectAll("circle")
+        window.site = g.selectAll("circle")
                 .data(point).enter()
                 .append("circle")
                 .attr("cx", function (d) { return projectPoint(d).x + margin; })
                 .attr("cy", function (d) { return projectPoint(d).y + margin; })
                 .attr("r", 20);
+
+        window.col = d3.scaleLinear()
+                    .domain([0, d3.max(data, function(d){
+                        return d3.max(d, function(dd){return dd.S})
+                    })])
+                    .range([0, 1]);
 
         map.on("zoomend", reset);
         reset();
@@ -219,15 +242,12 @@
 
             g.attr("transform", "translate(" + (-topLeft.x) + "," + (-topLeft.y) + ")");
 
-            var col = d3.scaleLinear()
-                    .domain([0, d3.max(data[100], function(d){return d.S})])
-                    .range([0, 255]);
+            //var col = d3.scaleLinear()
+            //        .domain([0, d3.max(data[0], function(d){return d.S})])
+            //        .range([0, 255]);
 
             site.attr("cx", function (d) { return projectPoint(d).x + margin; })
-                .attr("cy", function (d) { return projectPoint(d).y + margin; })
-                .attr("fill", function(d, i) { 
-                    return "rgb(" + Math.floor(col(data[100][i].S)) + ",0,0)"
-                });
+                .attr("cy", function (d) { return projectPoint(d).y + margin; });
 
         }
 
