@@ -98,7 +98,7 @@
         }
     });
 
-
+    //建立時間拉軸
     var sliderControl = L.Control.extend({
 
         options: {
@@ -114,35 +114,32 @@
             input.name = 'time';
             input.min = '0';
             input.value = '0';
-            input.max = data.length - 1;
+            //input.max = data.length - 1;          
 
             input.style.width = '147px';
             input.style.height = '36px';
 
             input.addEventListener('input', function(){
-
                 var index = this.value;
-                //var col = d3.scaleLinear()
-                //    .domain([0, d3.max(data[index], function(d){return d.S})])
-                //    .range([0, 255]);
 
+                document.querySelector('p[name=showtime]').innerHTML = '時間：' + data[index].time + '天';
 
                 site.attr("fill", function(d, i) { 
-                     
                      // "rgb(" + Math.floor(col(data[index][i].S)) + ",0,0)"
                     return d3.interpolateViridis(col(data[index][i].S))
                 });
             }, false);
 
+            var p = document.createElement('p');
+            p.setAttribute('name', 'showtime');
+            p.innerHTML = '時間：';
+
+            container.appendChild(p);
             container.appendChild(input);
 
             container.style.backgroundColor = 'white';
             container.style.width = '150px';
-            container.style.height = '36px';
-
-            //container.onclick = function() {
-            //    console.log('buttonClicked');
-            //}
+            container.style.height = '80px';
 
             L.DomEvent.disableClickPropagation(container);
             
@@ -150,8 +147,56 @@
         }
     });
 
-    map.addControl(new readFileControl());
+    //colorBar
+    var colorBarControl = L.Control.extend({
+        options: {
+            position: 'bottomleft'
+        },
 
+        onAdd: function(map) {
+            var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+            container.style.backgroundColor = 'white';
+            container.style.width = '350px';
+            container.style.height = '60px';
+            container.setAttribute('name', 'colorbar');
+
+            var canvas = document.createElement("canvas");
+
+            canvas.setAttribute('width','350px');
+            canvas.setAttribute('height','60px');
+
+            var context = canvas.getContext("2d");
+            context.textAlign = "center";
+
+            var max = d3.max(data, function(d){
+                    return d3.max(d, function(dd){return dd.S})
+                });
+
+            for (var i = 0; i < 100; i++) {
+                context.beginPath();
+                context.rect( i*3 + 25, 8, 3, 30);
+                context.fillStyle = d3.interpolateViridis(i/100);
+                context.fill();
+                context.closePath();
+                if (i % 20 == 0){
+                    context.fillStyle = '#000';
+                    context.fillText((i * max / 100).toFixed(1), i*3 + 25, 50);
+                }
+            }
+            context.fillStyle = '#000';
+            context.fillText(max.toFixed(1), 325, 50);
+
+            container.appendChild(canvas);
+            //container.onclick = function() {
+            //    console.log('buttonClicked');
+            //}
+            return container;
+        }
+    });
+
+    map.addControl(new readFileControl());
+    map.addControl(new sliderControl());
 
     //讀檔
     function readfile() {
@@ -170,8 +215,9 @@
             var data = event.target.result;
 
             data = data.replace(/ /g, "").split('\n');
-            data.splice(0, 1);
-            data.pop();
+            data = data.slice(1, data.length - 1);
+            //data.splice(0, 1);
+            //data.pop();
             var head = 32;
             data.forEach(function(item, index) {
                 var tem = data[index].split(',');
@@ -196,7 +242,7 @@
             window.data = data;
 
             callD3();
-            map.addControl(new sliderControl());
+
 
         };
 
@@ -205,30 +251,85 @@
 
     //呼叫D3繪圖
     function callD3(){
-        var svg = d3.select(map.getPanes().overlayPane).append("svg");
-        var g = svg.append("g").attr("class", "leaflet-zoom-hide");
-        var point = geoData.SankuaicuoGridPoint2;
 
-        var margin = 30;
+        if (document.querySelector('#svg') === null){
+            var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("id", "svg");
+            var g = svg.append("g").attr("class", "leaflet-zoom-hide");
+        
+            var point = geoData.SankuaicuoGridPoint2;
 
-        var ymm = d3.extent(point, function(d){ return d[1]});
-        var xmm = d3.extent(point, function(d){ return d[0]});
+            var margin = 30;
 
-        window.site = g.selectAll("circle")
+            var ymm = d3.extent(point, function(d){ return d[1]});
+            var xmm = d3.extent(point, function(d){ return d[0]});
+
+            window.col = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d){
+                    return d3.max(d, function(dd){return dd.S})
+                })])
+                .range([0, 1]);
+
+            window.site = g.selectAll("circle")
                 .data(point).enter()
                 .append("circle")
                 .attr("cx", function (d) { return projectPoint(d).x + margin; })
                 .attr("cy", function (d) { return projectPoint(d).y + margin; })
-                .attr("r", 20);
+                .attr("r", 20)
+                .attr("fill", function(d, i) { 
+                    return d3.interpolateViridis(col(data[0][i].S))
+                });
 
-        window.col = d3.scaleLinear()
-                    .domain([0, d3.max(data, function(d){
-                        return d3.max(d, function(dd){return dd.S})
-                    })])
-                    .range([0, 1]);
+            map.on("zoomend", reset);
+            reset();
+            map.addControl(new colorBarControl());
 
-        map.on("zoomend", reset);
-        reset();
+        } else {
+            var svg = d3.select('#svg');
+            var g = svg.select('g.leaflet-zoom-hide');
+
+            window.col = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d){
+                    return d3.max(d, function(dd){return dd.S})
+                })])
+                .range([0, 1]);
+
+            window.site = g.selectAll("circle")
+                .attr("fill", function(d, i) { 
+                    return d3.interpolateViridis(col(data[0][i].S))
+                });
+
+            var canvas = document.querySelector("canvas");
+
+            var context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            context.textAlign = "center";
+
+            var max = d3.max(data, function(d){
+                    return d3.max(d, function(dd){return dd.S})
+                });
+
+            for (var i = 0; i < 100; i++) {
+                context.beginPath();
+                context.rect( i*3 + 25, 8, 3, 30);
+                context.fillStyle = d3.interpolateViridis(i/100);
+                context.fill();
+                context.closePath();
+                if (i % 20 == 0){
+                    context.fillStyle = '#000';
+                    context.fillText((i * max / 100).toFixed(1), i*3 + 25, 50);
+                }
+            }
+            context.fillStyle = '#000';
+            context.fillText(max.toFixed(1), 325, 50);
+        }
+
+        var input = document.querySelector('input[name=time]');
+        input.max = data.length - 1;
+        input.value = '0';
+        document.querySelector('p[name=showtime]').innerHTML = '時間：0天';
+
+        
 
         function reset(){
 
@@ -259,6 +360,7 @@
     //綁定POP事件
     function onEachFeature(feature, layer) {
         layer.bindPopup(feature.properties.Name);
+        return
     };
 
     //設定Icon物件
