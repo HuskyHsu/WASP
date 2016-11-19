@@ -59,8 +59,8 @@
     var map = L.map('map', {
         layers: [streets, PotentialDanger, River]
     }).fitBounds([
-        [24.9790491, 121.2355337],
-        [25.1031019, 121.2712828]
+        [25.02, 121.249],
+        [25.05, 121.254]
     ]);
 
     L.control.layers(baseMaps, overlayMaps).addTo(map);
@@ -126,7 +126,8 @@
 
                 site.attr("fill", function(d, i) { 
                      // "rgb(" + Math.floor(col(data[index][i].S)) + ",0,0)"
-                    return d3.interpolateViridis(col(data[index][i].S))
+                    //return d3.interpolateViridis(col(data[index][i].S))
+                    return col(data[index][i].S)
                 });
             }, false);
 
@@ -173,10 +174,13 @@
                     return d3.max(d, function(dd){return dd.S})
                 });
 
+
+
             for (var i = 0; i < 100; i++) {
                 context.beginPath();
                 context.rect( i*3 + 25, 8, 3, 30);
-                context.fillStyle = d3.interpolateViridis(i/100);
+                context.fillStyle = col(i * max / 100);
+                //context.fillStyle = d3.interpolateViridis(i/100);
                 context.fill();
                 context.closePath();
                 if (i % 20 == 0){
@@ -267,7 +271,7 @@
                 .domain([0, d3.max(data, function(d){
                     return d3.max(d, function(dd){return dd.S})
                 })])
-                .range([0, 1]);
+                .range(['#FFFF6F', '#006000']);
 
             window.site = g.selectAll("circle")
                 .data(point).enter()
@@ -276,7 +280,8 @@
                 .attr("cy", function (d) { return projectPoint(d).y + margin; })
                 .attr("r", 20)
                 .attr("fill", function(d, i) { 
-                    return d3.interpolateViridis(col(data[0][i].S))
+                    return col(data[0][i].S)
+                    //return d3.interpolateViridis(col(data[0][i].S))
                 });
 
             map.on("zoomend", reset);
@@ -295,7 +300,8 @@
 
             window.site = g.selectAll("circle")
                 .attr("fill", function(d, i) { 
-                    return d3.interpolateViridis(col(data[0][i].S))
+                    return col(data[0][i].S)
+                    //return d3.interpolateViridis(col(data[0][i].S))
                 });
 
             var canvas = document.querySelector("canvas");
@@ -312,7 +318,8 @@
             for (var i = 0; i < 100; i++) {
                 context.beginPath();
                 context.rect( i*3 + 25, 8, 3, 30);
-                context.fillStyle = d3.interpolateViridis(i/100);
+                context.fillStyle = col(i * max / 100);
+                //context.fillStyle = d3.interpolateViridis(i/100);
                 context.fill();
                 context.closePath();
                 if (i % 20 == 0){
@@ -348,7 +355,8 @@
             //        .range([0, 255]);
 
             site.attr("cx", function (d) { return projectPoint(d).x + margin; })
-                .attr("cy", function (d) { return projectPoint(d).y + margin; });
+                .attr("cy", function (d) { return projectPoint(d).y + margin; })
+                .attr('r',(bottomRight.x - topLeft.x)/30);
 
         }
 
