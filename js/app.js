@@ -59,7 +59,7 @@
     var map = L.map('map', {
         layers: [streets, PotentialDanger, River]
     }).fitBounds([
-        [25.02, 121.249],
+        [25.02, 121.240],
         [25.05, 121.254]
     ]);
 
@@ -119,16 +119,17 @@
             input.style.width = '147px';
             input.style.height = '36px';
 
-            input.addEventListener('input', function(){
+            input.addEventListener('input', function() {
                 var index = this.value;
 
                 document.querySelector('p[name=showtime]').innerHTML = '時間：' + data[index].time + '天';
 
-                site.attr("fill", function(d, i) { 
-                     // "rgb(" + Math.floor(col(data[index][i].S)) + ",0,0)"
-                    //return d3.interpolateViridis(col(data[index][i].S))
-                    return col(data[index][i].S)
+                SkCGridPoint.eachLayer(function(circle) {
+                    circle.setStyle({
+                        fillColor: col(data[index][circle._index].S)
+                    });
                 });
+
             }, false);
 
             var p = document.createElement('p');
@@ -143,7 +144,7 @@
             container.style.height = '80px';
 
             L.DomEvent.disableClickPropagation(container);
-            
+
             return container;
         }
     });
@@ -155,7 +156,14 @@
         },
 
         onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+            var child = document.querySelector('.colorBar');
+
+            var parent = document.querySelector('.leaflet-bottom.leaflet-left');
+            if (child !== null)
+                parent.removeChild(child);
+
+            var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom colorBar');
 
             container.style.backgroundColor = 'white';
             container.style.width = '350px';
@@ -164,28 +172,28 @@
 
             var canvas = document.createElement("canvas");
 
-            canvas.setAttribute('width','350px');
-            canvas.setAttribute('height','60px');
+            canvas.setAttribute('width', '350px');
+            canvas.setAttribute('height', '60px');
 
             var context = canvas.getContext("2d");
             context.textAlign = "center";
 
-            var max = d3.max(data, function(d){
-                    return d3.max(d, function(dd){return dd.S})
-                });
-
-
+            var max = d3.max(data, function(d) {
+                return d3.max(d, function(dd) {
+                    return dd.S
+                })
+            });
 
             for (var i = 0; i < 100; i++) {
                 context.beginPath();
-                context.rect( i*3 + 25, 8, 3, 30);
+                context.rect(i * 3 + 25, 8, 3, 30);
                 context.fillStyle = col(i * max / 100);
                 //context.fillStyle = d3.interpolateViridis(i/100);
                 context.fill();
                 context.closePath();
-                if (i % 20 == 0){
+                if (i % 20 == 0) {
                     context.fillStyle = '#000';
-                    context.fillText((i * max / 100).toFixed(1), i*3 + 25, 50);
+                    context.fillText((i * max / 100).toFixed(1), i * 3 + 25, 50);
                 }
             }
             context.fillStyle = '#000';
@@ -231,8 +239,8 @@
                 tem.pop();
 
                 var sitegrid = [];
-                for (var i = 1; i <= head; i++){
-                    sitegrid.push({S: tem[i + head], W: tem[i]});
+                for (var i = 1; i <= head; i++) {
+                    sitegrid.push({ S: tem[i + head], W: tem[i] });
                 }
 
                 sitegrid.time = tem[0];
@@ -242,10 +250,22 @@
             });
 
             //document.querySelector('[name=Text1]').innerHTML = '模擬天數：' + data[data.length - 1][0] + ' 天';
+            document.querySelector('p[name=showtime]').innerHTML = '時間：0天';
+            document.querySelector('[name=time]').value = '0';
 
             window.data = data;
 
-            callD3();
+            window.SkCGridPoint = new L.LayerGroup();
+            //callD3();
+            window.col = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) {
+                    return d3.max(d, function(dd) {
+                        return dd.S
+                    })
+                })])
+                .range(['#FFFF6F', '#006000']);
+
+            addgridpoint();
 
 
         };
@@ -253,36 +273,160 @@
         fReader.readAsText(file);
     };
 
-    //呼叫D3繪圖
-    function callD3(){
 
-        if (document.querySelector('#svg') === null){
+    function addgridpoint() {
+        geoData.SankuaicuoGridPoint2.forEach(function(item, index) {
+
+            var circle = L.circle([item[1], item[0]], {
+                color: 'black',
+                weight: 2,
+                fillColor: col(data[0][index].S),
+                fillOpacity: 1,
+                radius: 50
+            }); //.bindPopup((index + 1).toString())
+
+            circle._index = index;
+
+            circle.on("click", function(event) {
+                console.log(event.target._index);
+                $('#myModal').modal({ backdrop: false }).show();
+
+                $('#myModal .modal-dialog').draggable({
+                    handle: ".modal-header"
+                });
+
+                callPolt(event.target._index);
+            });
+
+            circle.addTo(SkCGridPoint);
+        })
+
+        SkCGridPoint.addTo(map);
+
+        map.addControl(new colorBarControl());
+
+        //SkCGridPoint.eachLayer(function(point, i) {
+        //    point.setStyle({
+        //        fillColor: '#dddddd'
+        //    });
+        //});
+    };
+
+    function callPolt(index) {
+
+        var timeSeries = data.reduce(function(a, b) {
+            return a.concat([b[index].S]);
+        }, []);
+
+        var margin = { top: 20, right: 20, bottom: 30, left: 30 },
+            width = 730 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        var x = d3.scaleLinear()
+            .domain([0, 60])
+            .range([0, width]);
+
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) {
+                return d3.max(d, function(dd) {
+                    return dd.S
+                })
+            })])
+            .range([height, 0]);
+
+        var line = d3.line()
+            .curve(d3.curveBasis)
+            .x(function(d, i) {
+                return x(data[i].time);
+            })
+            .y(function(d) {
+                return y(d);
+            });
+
+        var svg = d3.select('#plot');
+
+        if (document.querySelector('#plot g') === null) {
+
+            var g = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            g.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            g.append("g")
+                .attr("class", "axis axis--y")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("fill", "#000")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", "0.71em")
+                .style("text-anchor", "end")
+                .text("濃度");
+
+            g.append("path")
+                .datum(timeSeries)
+                .attr("class", "line")
+                .attr("d", line);
+
+        } else {
+
+            d3.select('.line')
+                .datum(timeSeries)
+                .attr("d", line);
+
+        }
+    };
+
+
+    // $(document).on('click', '#myModal .minimize', function () {
+    //     $("#myModal .modal-body").slideToggle();
+    // })
+
+    //呼叫D3繪圖
+    function callD3() {
+
+        if (document.querySelector('#svg') === null) {
             var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("id", "svg");
             var g = svg.append("g").attr("class", "leaflet-zoom-hide");
-        
+
             var point = geoData.SankuaicuoGridPoint2;
 
             var margin = 30;
 
-            var ymm = d3.extent(point, function(d){ return d[1]});
-            var xmm = d3.extent(point, function(d){ return d[0]});
+            var ymm = d3.extent(point, function(d) {
+                return d[1]
+            });
+            var xmm = d3.extent(point, function(d) {
+                return d[0]
+            });
 
             window.col = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d){
-                    return d3.max(d, function(dd){return dd.S})
+                .domain([0, d3.max(data, function(d) {
+                    return d3.max(d, function(dd) {
+                        return dd.S
+                    })
                 })])
                 .range(['#FFFF6F', '#006000']);
 
             window.site = g.selectAll("circle")
                 .data(point).enter()
                 .append("circle")
-                .attr("cx", function (d) { return projectPoint(d).x + margin; })
-                .attr("cy", function (d) { return projectPoint(d).y + margin; })
+                .attr("cx", function(d) {
+                    return projectPoint(d).x + margin;
+                })
+                .attr("cy", function(d) {
+                    return projectPoint(d).y + margin;
+                })
                 .attr("r", 20)
-                .attr("fill", function(d, i) { 
+                .attr("fill", function(d, i) {
                     return col(data[0][i].S)
-                    //return d3.interpolateViridis(col(data[0][i].S))
+                        //return d3.interpolateViridis(col(data[0][i].S))
                 });
+
+            //site.bindPopup('QAQ');
 
             map.on("zoomend", reset);
             reset();
@@ -293,38 +437,42 @@
             var g = svg.select('g.leaflet-zoom-hide');
 
             window.col = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d){
-                    return d3.max(d, function(dd){return dd.S})
+                .domain([0, d3.max(data, function(d) {
+                    return d3.max(d, function(dd) {
+                        return dd.S
+                    })
                 })])
                 .range([0, 1]);
 
             window.site = g.selectAll("circle")
-                .attr("fill", function(d, i) { 
+                .attr("fill", function(d, i) {
                     return col(data[0][i].S)
-                    //return d3.interpolateViridis(col(data[0][i].S))
+                        //return d3.interpolateViridis(col(data[0][i].S))
                 });
 
             var canvas = document.querySelector("canvas");
 
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             context.textAlign = "center";
 
-            var max = d3.max(data, function(d){
-                    return d3.max(d, function(dd){return dd.S})
-                });
+            var max = d3.max(data, function(d) {
+                return d3.max(d, function(dd) {
+                    return dd.S
+                })
+            });
 
             for (var i = 0; i < 100; i++) {
                 context.beginPath();
-                context.rect( i*3 + 25, 8, 3, 30);
+                context.rect(i * 3 + 25, 8, 3, 30);
                 context.fillStyle = col(i * max / 100);
                 //context.fillStyle = d3.interpolateViridis(i/100);
                 context.fill();
                 context.closePath();
-                if (i % 20 == 0){
+                if (i % 20 == 0) {
                     context.fillStyle = '#000';
-                    context.fillText((i * max / 100).toFixed(1), i*3 + 25, 50);
+                    context.fillText((i * max / 100).toFixed(1), i * 3 + 25, 50);
                 }
             }
             context.fillStyle = '#000';
@@ -336,15 +484,15 @@
         input.value = '0';
         document.querySelector('p[name=showtime]').innerHTML = '時間：0天';
 
-        
 
-        function reset(){
+
+        function reset() {
 
             var topLeft = projectPoint([xmm[0], ymm[1]]);
             var bottomRight = projectPoint([xmm[1], ymm[0]]);
 
-            svg.attr("width", bottomRight.x - topLeft.x + margin*2)
-                .attr("height", bottomRight.y - topLeft.y + margin*2)
+            svg.attr("width", bottomRight.x - topLeft.x + margin * 2)
+                .attr("height", bottomRight.y - topLeft.y + margin * 2)
                 .style("left", (topLeft.x - margin) + "px")
                 .style("top", (topLeft.y - margin) + "px");
 
@@ -354,9 +502,13 @@
             //        .domain([0, d3.max(data[0], function(d){return d.S})])
             //        .range([0, 255]);
 
-            site.attr("cx", function (d) { return projectPoint(d).x + margin; })
-                .attr("cy", function (d) { return projectPoint(d).y + margin; })
-                .attr('r',(bottomRight.x - topLeft.x)/30);
+            site.attr("cx", function(d) {
+                    return projectPoint(d).x + margin;
+                })
+                .attr("cy", function(d) {
+                    return projectPoint(d).y + margin;
+                })
+                .attr('r', (bottomRight.x - topLeft.x) / 30);
 
         }
 
@@ -381,7 +533,7 @@
     };
 
     //設定GeoJson物件
-    function setGeoJson(data, icon){
+    function setGeoJson(data, icon) {
         return L.geoJson(data, {
             pointToLayer: seticon(icon),
             onEachFeature: onEachFeature
@@ -389,12 +541,12 @@
     };
 
     //取得Icon
-    function getIcon(path){
+    function getIcon(path) {
         return L.icon({
             iconUrl: path,
             iconSize: [32, 32],
             iconAnchor: [16, 16],
-            popupAnchor: [0, -10] 
+            popupAnchor: [0, -10]
         })
     };
 

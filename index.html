@@ -1,65 +1,105 @@
 <!DOCTYPE html>
 <html>
-	<head>
-	<title>WASP結果展示</title>
-	<link rel="stylesheet" href="./css/leaflet.css" />
-	<style>
-		html, body {
-			margin: 0;
-			border: 0;
-			height: 100%;
-		}
-		
-		#map { 
-			height: 100%;
-			width: 100%;
-		}
 
-		input[name=upload] {
-    		position: absolute;
-    		top: 0;
-    		right: 0;
-    		margin: 0;
-    		padding: 0;
-    		font-size: 20px;
-    		cursor: pointer;
-    		opacity: 0;
-    		filter: alpha(opacity=0);
-		}
+<head>
+    <title>WASP結果展示</title>
+    <link rel="stylesheet" href="./css/leaflet.css" />
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <!-- <link rel="stylesheet" href="./css/bootstrap-dialog.min.css" /> -->
 
-		div.csv {
-			background-image : url(css/images/csv.png);
-			background-size: 26px 26px;
-			background-position: 50% 50%;
-    		background-repeat: no-repeat;
-    		display: block;
-		}
+    <style>
+    html,
+    body {
+        margin: 0;
+        border: 0;
+        height: 100%;
+    }
+    
+    #map {
+        height: 100%;
+        width: 100%;
+    }
+    
+    input[name=upload] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    
+    div.csv {
+        background-image: url(css/images/csv.png);
+        background-size: 26px 26px;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        display: block;
+    }
+    
+    svg circle {
+        stroke: #000;
+        stroke-width: 1;
+    }
+    
+    svg circle:hover {
+        stroke: #fff;
+        stroke-width: 2;
+        fill: #0094ff;
+    }
+    
+    p {
+        font-size: 1.3em;
+        margin: 5px;
+    }
 
-		svg circle{
-			stroke: #000;
-    		stroke-width: 1;
-		}
+    #myModal .modal-dialog
+	{
+    	width: 760px; /* your width */
+	}
 
-		svg circle:hover{
-			stroke: #fff;
-    		stroke-width: 2;
-    		fill: #0094ff;
-		}
+	.line {
+  		fill: none;
+  		stroke: steelblue;
+  		stroke-width: 1.5px;
+	}
 
-		p{
-			font-size: 1.3em;
-			margin: 5px;
-		};
-		
-	</style>
-	</head>
-	
-	<body>
-		<div id="map"></div>
-	
-		<script src="./js/lib/leaflet.js"></script>
-		<script src="./js/lib/d3.min.js"></script>
-		<script src="./js/data.js"></script>
-		<script src="./js/app.js"></script>
-	</body>
+    
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<!-- <button type="button" class="close minimize" aria-hidden="true">–</button> -->
+                    <h4 class="modal-title">濃度時序變化</h4>
+                </div>
+                <div class="modal-body">
+                    <svg width=730 height=400 id="plot"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./js/lib/jquery-3.1.1.min.js"></script>
+    <script src="./js/lib/jquery-ui.min.js"></script>
+    <script src="./js/lib/leaflet.js"></script>
+    <script src="./js/lib/bootstrap.min.js"></script>
+    <!-- <script src="./js/lib/bootstrap-dialog.min.js"></script> -->
+    <script src="./js/lib/d3.min.js"></script>
+
+
+    <script src="./js/data.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+
 </html>
