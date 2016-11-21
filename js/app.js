@@ -126,7 +126,7 @@
 
                 SkCGridPoint.eachLayer(function(circle) {
                     circle.setStyle({
-                        fillColor: col(data[index][circle._index].S)
+                        fillColor: col(data[index][circle._index][document.querySelector('[name=ws]:checked').value])
                     });
                 });
 
@@ -136,12 +136,16 @@
             p.setAttribute('name', 'showtime');
             p.innerHTML = '時間：';
 
+            var radio = document.createElement('div');
+            radio.innerHTML = '<form><input type="radio" name="ws" value="S" checked>底泥<input type="radio" name="ws" value="W" >水體</form>'
+
+            container.appendChild(radio);
             container.appendChild(p);
             container.appendChild(input);
 
             container.style.backgroundColor = 'white';
             container.style.width = '150px';
-            container.style.height = '80px';
+            container.style.height = '110px';
 
             L.DomEvent.disableClickPropagation(container);
 
@@ -180,7 +184,7 @@
 
             var max = d3.max(data, function(d) {
                 return d3.max(d, function(dd) {
-                    return dd.S
+                    return dd[document.querySelector('[name=ws]:checked').value]
                 })
             });
 
@@ -260,7 +264,7 @@
             window.col = d3.scaleLinear()
                 .domain([0, d3.max(data, function(d) {
                     return d3.max(d, function(dd) {
-                        return dd.S
+                        return dd[document.querySelector('[name=ws]:checked').value]
                     })
                 })])
                 .range(['#FFFF6F', '#006000']);
@@ -280,7 +284,7 @@
             var circle = L.circle([item[1], item[0]], {
                 color: 'black',
                 weight: 2,
-                fillColor: col(data[0][index].S),
+                fillColor: col(data[document.querySelector('[name=time]').value][index][document.querySelector('[name=ws]:checked').value]),
                 fillOpacity: 1,
                 radius: 50
             }); //.bindPopup((index + 1).toString())
@@ -315,7 +319,7 @@
     function callPolt(index) {
 
         var timeSeries = data.reduce(function(a, b) {
-            return a.concat([b[index].S]);
+            return a.concat([b[index][document.querySelector('[name=ws]:checked').value]]);
         }, []);
 
         var margin = { top: 20, right: 20, bottom: 30, left: 30 },
@@ -329,7 +333,7 @@
         var y = d3.scaleLinear()
             .domain([0, d3.max(data, function(d) {
                 return d3.max(d, function(dd) {
-                    return dd.S
+                    return dd[document.querySelector('[name=ws]:checked').value]
                 })
             })])
             .range([height, 0]);
@@ -385,137 +389,18 @@
     //     $("#myModal .modal-body").slideToggle();
     // })
 
-    //呼叫D3繪圖
-    function callD3() {
-
-        if (document.querySelector('#svg') === null) {
-            var svg = d3.select(map.getPanes().overlayPane).append("svg").attr("id", "svg");
-            var g = svg.append("g").attr("class", "leaflet-zoom-hide");
-
-            var point = geoData.SankuaicuoGridPoint2;
-
-            var margin = 30;
-
-            var ymm = d3.extent(point, function(d) {
-                return d[1]
-            });
-            var xmm = d3.extent(point, function(d) {
-                return d[0]
-            });
-
-            window.col = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) {
-                    return d3.max(d, function(dd) {
-                        return dd.S
-                    })
-                })])
-                .range(['#FFFF6F', '#006000']);
-
-            window.site = g.selectAll("circle")
-                .data(point).enter()
-                .append("circle")
-                .attr("cx", function(d) {
-                    return projectPoint(d).x + margin;
-                })
-                .attr("cy", function(d) {
-                    return projectPoint(d).y + margin;
-                })
-                .attr("r", 20)
-                .attr("fill", function(d, i) {
-                    return col(data[0][i].S)
-                        //return d3.interpolateViridis(col(data[0][i].S))
-                });
-
-            //site.bindPopup('QAQ');
-
-            map.on("zoomend", reset);
-            reset();
-            map.addControl(new colorBarControl());
-
-        } else {
-            var svg = d3.select('#svg');
-            var g = svg.select('g.leaflet-zoom-hide');
-
-            window.col = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) {
-                    return d3.max(d, function(dd) {
-                        return dd.S
-                    })
-                })])
-                .range([0, 1]);
-
-            window.site = g.selectAll("circle")
-                .attr("fill", function(d, i) {
-                    return col(data[0][i].S)
-                        //return d3.interpolateViridis(col(data[0][i].S))
-                });
-
-            var canvas = document.querySelector("canvas");
-
-            var context = canvas.getContext("2d");
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            context.textAlign = "center";
-
-            var max = d3.max(data, function(d) {
+    $(document).on('click', 'form input[name=ws]', function () {
+        window.col = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) {
                 return d3.max(d, function(dd) {
-                    return dd.S
+                    return dd[document.querySelector('[name=ws]:checked').value]
                 })
-            });
+            })])
+            .range(['#FFFF6F', '#006000']);
 
-            for (var i = 0; i < 100; i++) {
-                context.beginPath();
-                context.rect(i * 3 + 25, 8, 3, 30);
-                context.fillStyle = col(i * max / 100);
-                //context.fillStyle = d3.interpolateViridis(i/100);
-                context.fill();
-                context.closePath();
-                if (i % 20 == 0) {
-                    context.fillStyle = '#000';
-                    context.fillText((i * max / 100).toFixed(1), i * 3 + 25, 50);
-                }
-            }
-            context.fillStyle = '#000';
-            context.fillText(max.toFixed(1), 325, 50);
-        }
-
-        var input = document.querySelector('input[name=time]');
-        input.max = data.length - 1;
-        input.value = '0';
-        document.querySelector('p[name=showtime]').innerHTML = '時間：0天';
-
-
-
-        function reset() {
-
-            var topLeft = projectPoint([xmm[0], ymm[1]]);
-            var bottomRight = projectPoint([xmm[1], ymm[0]]);
-
-            svg.attr("width", bottomRight.x - topLeft.x + margin * 2)
-                .attr("height", bottomRight.y - topLeft.y + margin * 2)
-                .style("left", (topLeft.x - margin) + "px")
-                .style("top", (topLeft.y - margin) + "px");
-
-            g.attr("transform", "translate(" + (-topLeft.x) + "," + (-topLeft.y) + ")");
-
-            //var col = d3.scaleLinear()
-            //        .domain([0, d3.max(data[0], function(d){return d.S})])
-            //        .range([0, 255]);
-
-            site.attr("cx", function(d) {
-                    return projectPoint(d).x + margin;
-                })
-                .attr("cy", function(d) {
-                    return projectPoint(d).y + margin;
-                })
-                .attr('r', (bottomRight.x - topLeft.x) / 30);
-
-        }
-
-        function projectPoint(d) {
-            return map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
-        }
-    };
+        map.addControl(new colorBarControl());
+        addgridpoint();
+    })
 
     //綁定POP事件
     function onEachFeature(feature, layer) {
