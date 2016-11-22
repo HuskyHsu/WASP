@@ -60,7 +60,7 @@
         layers: [streets, PotentialDanger, River]
     }).fitBounds([
         [25.02, 121.240],
-        [25.05, 121.254]
+        [25.04, 121.247]
     ]);
 
     L.control.layers(baseMaps, overlayMaps).addTo(map);
@@ -171,13 +171,13 @@
 
             container.style.backgroundColor = 'white';
             container.style.width = '350px';
-            container.style.height = '60px';
+            container.style.height = '70px';
             container.setAttribute('name', 'colorbar');
 
             var canvas = document.createElement("canvas");
 
             canvas.setAttribute('width', '350px');
-            canvas.setAttribute('height', '60px');
+            canvas.setAttribute('height', '70px');
 
             var context = canvas.getContext("2d");
             context.textAlign = "center";
@@ -202,6 +202,9 @@
             }
             context.fillStyle = '#000';
             context.fillText(max.toFixed(1), 325, 50);
+
+            context.fillText(document.querySelector('[name=ws]:checked').value == 'W' ? '水體銅濃度(ppb)' : '底泥銅濃度(ppm)', 280, 65);
+            
 
             container.appendChild(canvas);
             //container.onclick = function() {
@@ -256,6 +259,7 @@
             //document.querySelector('[name=Text1]').innerHTML = '模擬天數：' + data[data.length - 1][0] + ' 天';
             document.querySelector('p[name=showtime]').innerHTML = '時間：0天';
             document.querySelector('[name=time]').value = '0';
+            document.querySelector('[name=time]').max = data.length - 1;
 
             window.data = data;
 
@@ -357,7 +361,15 @@
             g.append("g")
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+                .call(d3.axisBottom(x))
+                .append("text")
+                .attr("fill", "#000")
+                .attr("y", 22)
+                .attr("x", width)
+                .attr("dy", "0.71em")
+                .style("text-anchor", "end")
+                .text('時間(天)');
+
 
             g.append("g")
                 .attr("class", "axis axis--y")
@@ -368,7 +380,7 @@
                 .attr("y", 6)
                 .attr("dy", "0.71em")
                 .style("text-anchor", "end")
-                .text("濃度");
+                .text(document.querySelector('[name=ws]:checked').value == 'W' ? '水體銅濃度(ppb)' : '底泥銅濃度(ppm)');
 
             g.append("path")
                 .datum(timeSeries)
@@ -400,6 +412,33 @@
 
         map.addControl(new colorBarControl());
         addgridpoint();
+
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) {
+                return d3.max(d, function(dd) {
+                    return dd[document.querySelector('[name=ws]:checked').value]
+                })
+            })])
+            .range([350, 0]);
+
+
+        var child = document.querySelector('.axis.axis--y');
+
+        var parent = child.parentElement;
+            if (child !== null)
+                parent.removeChild(child);
+
+        d3.select('#plot > g').append("g")
+            .attr("class", "axis axis--y")
+            .call(d3.axisLeft(y))
+            .append("text")
+            .attr("fill", "#000")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "0.71em")
+            .style("text-anchor", "end")
+            .text(document.querySelector('[name=ws]:checked').value == 'W' ? '水體銅濃度(ppb)' : '底泥銅濃度(ppm)');
+
     })
 
     //綁定POP事件
