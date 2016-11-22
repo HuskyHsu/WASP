@@ -296,7 +296,7 @@
             circle._index = index;
 
             circle.on("click", function(event) {
-                console.log(event.target._index);
+                //console.log(event.target._index);
                 $('#myModal').modal({ backdrop: false }).show();
 
                 $('#myModal .modal-dialog').draggable({
