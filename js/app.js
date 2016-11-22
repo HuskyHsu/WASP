@@ -331,7 +331,7 @@
             height = 400 - margin.top - margin.bottom;
 
         var x = d3.scaleLinear()
-            .domain([0, 60])
+            .domain([0, document.querySelector('[name=ws]:checked').value == 'W' ? 5 : 60])
             .range([0, width]);
 
         var y = d3.scaleLinear()
@@ -421,12 +421,18 @@
             })])
             .range([350, 0]);
 
+        var x = d3.scaleLinear()
+            .domain([0, document.querySelector('[name=ws]:checked').value == 'W' ? 5 : 60])
+            .range([0, 680]);
+
 
         var child = document.querySelector('.axis.axis--y');
+        if (child !== null)
+            child.parentElement.removeChild(child);
 
-        var parent = child.parentElement;
-            if (child !== null)
-                parent.removeChild(child);
+        var child = document.querySelector('.axis.axis--x');
+        if (child !== null)
+            child.parentElement.removeChild(child);
 
         d3.select('#plot > g').append("g")
             .attr("class", "axis axis--y")
@@ -438,6 +444,18 @@
             .attr("dy", "0.71em")
             .style("text-anchor", "end")
             .text(document.querySelector('[name=ws]:checked').value == 'W' ? '水體銅濃度(ppb)' : '底泥銅濃度(ppm)');
+
+        d3.select('#plot > g').append("g")
+            .attr("class", "axis axis--x")
+            .attr("transform", "translate(0," + 350 + ")")
+            .call(d3.axisBottom(x))
+            .append("text")
+            .attr("fill", "#000")
+            .attr("y", 22)
+            .attr("x", 680)
+            .attr("dy", "0.71em")
+            .style("text-anchor", "end")
+            .text('時間(天)');
 
     })
 
