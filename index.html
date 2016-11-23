@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Leaflet</title>
+    <link rel="stylesheet" href="./css/leaflet.css" />
+    <link rel="stylesheet" href="./css/bulma.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+    html,
+    body {
+        font-family: Microsoft JhengHei;
+        padding-top: 10px;
+        height: 100%;
+        width: 100%;
+    }
+    
+    #map,
+    #lineChart {
+        height: 40%;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .fullheight {
+        height: 100%;
+    }
+    
+    .r50 {
+        height: 50%;
+    }
+    
+    .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+    }
+
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="tile is-ancestor">
+        <div class="tile is-10 is-vertical is-parent">
+            <div class="tile is-child box">
+                <dir id="map"></dir>
+            </div>
+            <div class="tile is-child box">
+                <svg id="lineChart"></svg>
+            </div>
+        </div>
+        <div class="tile is-parent">
+            <div class="tile is-child box">
+                <input type="file" name="file">
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="tile is-ancestor fullheight">
+        <div class="tile is-vertical is-10">
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <dir id="map"></dir>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box osvg">
+                    <svg id="lineChart"></svg>
+                </article>
+            </div>
+        </div>
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <input type="file" name="file">
+            </article>
+        </div>
+    </div> -->
+    <script src="./js/lib/leaflet.js"></script>
+    <script src="./js/lib/d3.min.js"></script>
+    <script src="./js/lib/vue.js"></script>
+    <script src="./js/map.js"></script>
+    <script src="./js/readCSV.js"></script>
+    <script src="./js/plot.js"></script>
+</body>
+
+</html>
