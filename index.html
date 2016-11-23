@@ -69,7 +69,16 @@
         <div class="tile is-parent r100">
             <div class="tile is-child box">
                 <input type="file" name="file">
-                <a href="./test/Total_Concentration1122.csv">測試資料</a>
+                <a href="./test/Total_Concentration1122.csv">測試資料下載</a>
+                <br><br>
+                <form id="showType">
+                    <label for="W">顯示類別</label><br>
+                    <input type="radio" id="S" value="S" v-model="type">
+                    <label for="S">底泥</label><br>
+                    <input type="radio" id="W" value="W" v-model="type">
+                    <label for="W">水體</label><br>
+                    <!-- <p>類別: {{ type }}</p> -->
+                </form>
             </div>
         </div>
     </div>
@@ -80,6 +89,8 @@
     <script src="./js/map.js"></script>
     <script src="./js/readCSV.js"></script>
     <script src="./js/plot.js"></script>
+
+    <script src="./js/app.js"></script>
 </body>
 
 </html>

@@ -45,7 +45,7 @@
             window.data = data;
             window.data.max = d3.max(data, function (d) {
                 return d3.max(d, function (dd) {
-                    return dd['S']
+                    return dd[vm.type]
                 })
             });
             window.data.colmap = d3.scaleLinear()
@@ -53,11 +53,11 @@
                 .range(['#FFFF6F', '#006000']);
 
             window.chart = new window.Charts.line({data: data});
-            window.chart.draw(31);
+            window.chart.draw(vm.site);
             window.mapObj.SKCGroup.eachLayer(function(circle) {
                 circle.setStyle({
                     fillOpacity: 1,
-                    fillColor: window.data.colmap(data[0][circle._index]['S'])
+                    fillColor: window.data.colmap(data[0][circle._index][vm.type])
                 });
 
                 if (circle._index == 31){
@@ -111,7 +111,7 @@
                     context.fillStyle = '#000';
                     context.fillText(max.toFixed(1), 325, 50);
 
-                    context.fillText('底泥銅濃度(ppm)', 280, 65);
+                    context.fillText(vm.type == "S" ? '底泥銅濃度(ppm)' : '水體銅濃度(ppb)', 280, 65);
 
 
                     container.appendChild(canvas);

@@ -5,19 +5,21 @@
     var line = function (info) {
 
         this.data = info.data;
-        this.max = d3.max(data, function (d) {
-                return d3.max(d, function (dd) {
-                    return dd['S']
-                })
-            });
+
         this.focusIndex = 0;
 
     }
 
     line.prototype.draw = function (index) {
 
+        this.max = d3.max(this.data, function(d) {
+            return d3.max(d, function(dd) {
+                return dd[vm.type]
+            })
+        });
+
         var timeSeries = this.data.reduce(function (a, b) {
-                return a.concat([b[index]['S']]);
+                return a.concat([b[index][vm.type]]);
             }, []);
 
         var osvg = document.querySelector('.osvg');
@@ -31,8 +33,9 @@
 
         var bisectDate = d3.bisector(function(d) { return d.time; }).left;
 
+
         var x = d3.scaleLinear()
-            .domain([0, 60])
+            .domain([0, vm.type == "S" ? 30 : 1])
             .range([0, width])
             .clamp(true);
 
@@ -79,18 +82,16 @@
             .attr("y", 6)
             .attr("dy", "0.71em")
             .style("text-anchor", "end")
-            .text('底泥銅濃度(ppm)');
+            .text(vm.type == "S" ? '底泥銅濃度(ppm)' : '水體銅濃度(ppb)');
 
         g.append("path")
             .datum(timeSeries)
             .attr("class", "line")
             .attr("d", line);
 
-        console.log(this.focusIndex);
-
         var focus = svg.append("g")
             .attr("class", "focus")
-            .attr("transform", "translate(" + (x(data[this.focusIndex].time) + margin.left) + "," + (y(data[this.focusIndex][index]['S']) + margin.top) + ")");
+            .attr("transform", "translate(" + (x(data[this.focusIndex].time) + margin.left) + "," + (y(data[this.focusIndex][index][vm.type]) + margin.top) + ")");
             //.style("display", "none");
 
         focus.append("circle")
@@ -112,16 +113,15 @@
                 d1 = data[i],
                 d = x0 - d0.time > d1.time - x0 ? d1 : d0,
                 t = x0 - d0.time > d1.time - x0 ? (i - 1) : i;
-            focus.attr("transform", "translate(" + (x(d.time) + margin.left) + "," + (y(d[index]['S']) + margin.top) + ")");
+            focus.attr("transform", "translate(" + (x(d.time) + margin.left) + "," + (y(d[index][vm.type]) + margin.top) + ")");
 
             window.mapObj.SKCGroup.eachLayer(function(circle) {
                 circle.setStyle({
-                    fillColor: window.data.colmap(d[circle._index]['S'])
+                    fillColor: window.data.colmap(d[circle._index][vm.type])
                 });
             });
 
             thisObj.focusIndex = t == i ? t - 1 : t + 1;
-            console.log(t, i);
 
         }
 

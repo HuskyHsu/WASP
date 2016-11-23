@@ -60,7 +60,8 @@
             });
 
             this.setStyle({ color: 'red' });
-            window.chart.draw(circle._index, window.focusIndex);
+            vm.site = circle._index;
+            window.chart.draw(vm.site, window.chart.focusIndex);
         });
 
         circle.addTo(SKCGroup);
