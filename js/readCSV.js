@@ -66,7 +66,7 @@
             });
 
             //colorBar
-            var colorBarControl = L.Control.extend({
+            window.colorBarControl = L.Control.extend({
                 options: {
                     position: 'bottomleft'
                 },
@@ -120,7 +120,7 @@
                 }
             });
 
-            window.mapObj.map.addControl(new colorBarControl());
+            window.mapObj.map.addControl(new window.colorBarControl());
 
         };
 

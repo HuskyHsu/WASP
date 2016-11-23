@@ -18,6 +18,8 @@
             })
         });
 
+        window.data.max = this.max;
+
         var timeSeries = this.data.reduce(function (a, b) {
                 return a.concat([b[index][vm.type]]);
             }, []);

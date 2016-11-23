@@ -13,6 +13,9 @@ var vm = new Vue({
                     fillColor: window.data.colmap(window.data[window.chart.focusIndex][vm.site][vm.type])
                 });
             });
+
+			window.mapObj.map.addControl(new window.colorBarControl());
+
     	}
   	}
 })
