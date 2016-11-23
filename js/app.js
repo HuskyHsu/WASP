@@ -7,6 +7,12 @@ var vm = new Vue({
     watch: {
     	type: function (val) {
       		window.chart.draw(vm.site, window.chart.focusIndex);
+
+			window.mapObj.SKCGroup.eachLayer(function(circle) {
+                circle.setStyle({
+                    fillColor: window.data.colmap(window.data[window.chart.focusIndex][vm.site][vm.type])
+                });
+            });
     	}
   	}
 })
