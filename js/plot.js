@@ -5,14 +5,16 @@
     var line = function (info) {
 
         this.data = info.data;
-        this.extent = d3.extent(data, function (d) {
+        this.max = d3.max(data, function (d) {
                 return d3.max(d, function (dd) {
                     return dd['S']
                 })
             });
+        this.focusIndex = 0;
+
     }
 
-    line.prototype.draw = function (index, focusIndex) {
+    line.prototype.draw = function (index) {
 
         var timeSeries = this.data.reduce(function (a, b) {
                 return a.concat([b[index]['S']]);
@@ -25,6 +27,7 @@
         var height = osvg.clientHeight - margin.top - margin.bottom - 10;
 
         var data = this.data;
+        var thisObj = this;
 
         var bisectDate = d3.bisector(function(d) { return d.time; }).left;
 
@@ -34,7 +37,7 @@
             .clamp(true);
 
         var y = d3.scaleLinear()
-            .domain(this.extent)
+            .domain([0, this.max])
             .range([height, 0]);
 
         var line = d3.line()
@@ -83,9 +86,11 @@
             .attr("class", "line")
             .attr("d", line);
 
+        console.log(this.focusIndex);
+
         var focus = svg.append("g")
             .attr("class", "focus")
-            .attr("transform", "translate(" + (x(data[focusIndex].time) + margin.left) + "," + (y(data[focusIndex][index]['S']) + margin.top) + ")");
+            .attr("transform", "translate(" + (x(data[this.focusIndex].time) + margin.left) + "," + (y(data[this.focusIndex][index]['S']) + margin.top) + ")");
             //.style("display", "none");
 
         focus.append("circle")
@@ -95,7 +100,7 @@
             .attr("class", "overlay")
             .attr("width", width)
             .attr("height", height)
-            .attr("transform", "translate(" + (margin.left) + "," + (margin.top) + ")")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .on("mouseover", function() { focus.style("display", null); })
             //.on("mouseout", function() { focus.style("display", "none"); })
             .on("mousemove", mousemove);
@@ -111,15 +116,14 @@
 
             window.mapObj.SKCGroup.eachLayer(function(circle) {
                 circle.setStyle({
-                    fillColor: colmap(d[circle._index]['S'])
+                    fillColor: window.data.colmap(d[circle._index]['S'])
                 });
             });
 
-            window.focusIndex = t;
+            thisObj.focusIndex = t == i ? t - 1 : t + 1;
+            console.log(t, i);
 
         }
-
-
 
 
     }
