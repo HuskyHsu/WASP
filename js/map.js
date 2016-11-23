@@ -1,4 +1,5 @@
 (function (window, document, undefined) {
+
     //WMTS設定
     var streets = L.tileLayer('https://mt{s}.google.com/vt/x={x}&y={y}&z={z}&hl=zh-TW', {
             id : 'streets',
@@ -50,7 +51,17 @@
 
         circle._index = index;
 
-        circle.on("click", function (event) {});
+        circle.on("click", function (event) {
+
+            SKCGroup.eachLayer(function(circle) {
+                circle.setStyle({
+                    color: 'black'
+                });
+            });
+
+            this.setStyle({ color: 'red' });
+            window.chart.draw(circle._index, window.focusIndex);
+        });
 
         circle.addTo(SKCGroup);
     })

@@ -44,7 +44,30 @@
 
             window.data = data;
 
-            plot(0);
+            window.colmap = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) {
+                    return d3.max(d, function(dd) {
+                        return dd['S']
+                    })
+                })])
+                .range(['#FFFF6F', '#006000']);
+
+            //plot(0);
+            window.chart = new window.Charts.line({data: data});
+            window.chart.draw(31, 0);
+            window.mapObj.SKCGroup.eachLayer(function(circle) {
+                circle.setStyle({
+                    fillOpacity: 1,
+                    fillColor: colmap(data[0][circle._index]['S'])
+                });
+
+                if (circle._index == 31){
+                    circle.setStyle({ color: 'red' });
+                }
+            });
+
+            window.focusIndex = 0;
+
 
         };
 

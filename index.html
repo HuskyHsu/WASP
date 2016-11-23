@@ -3,32 +3,34 @@
 
 <head>
     <title>Leaflet</title>
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="./css/leaflet.css" />
-    <link rel="stylesheet" href="./css/bulma.css" />
+    <!-- <link rel="stylesheet" href="./css/bulma.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.3/css/bulma.min.css" />
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
     <style>
     html,
     body {
         font-family: Microsoft JhengHei;
         padding-top: 10px;
-        height: 100%;
+        height: 50VH;
         width: 100%;
     }
     
-    #map,
-    #lineChart {
-        height: 40%;
+    #map, #lineChart {
+        height: 100%;
         width: 100%;
         margin: 0;
     }
     
-    .fullheight {
-        height: 100%;
-    }
-    
-    .r50 {
-        height: 50%;
-    }
+    .r100 { height: calc(100VH - 25px); }
+    .r70 { height: calc(70VH - 35px); }
+    .r60 { height: calc(60VH - 35px); }
+    .r50 { height: calc(50VH - 35px); }
+    .r40 { height: calc(40VH - 35px); }
+    .r30 { height: calc(30VH - 35px); }
     
     .line {
         fill: none;
@@ -36,6 +38,18 @@
         stroke-width: 1.5px;
     }
 
+    .osvg {
+        padding: 5px;
+    }
+
+    .overlay {
+        fill: none;
+        pointer-events: all;
+    }
+
+    .focus circle {
+        fill: red;
+    }
 
 
     </style>
@@ -43,41 +57,22 @@
 
 <body>
 
-    <div class="tile is-ancestor">
-        <div class="tile is-10 is-vertical is-parent">
-            <div class="tile is-child box">
+    <div class="tile is-ancestor r100">
+        <div class="tile is-10 is-vertical is-parent r100">
+            <div class="tile is-child box r70">
                 <dir id="map"></dir>
             </div>
-            <div class="tile is-child box">
+            <div class="tile is-child box r30 osvg">
                 <svg id="lineChart"></svg>
             </div>
         </div>
-        <div class="tile is-parent">
+        <div class="tile is-parent r100">
             <div class="tile is-child box">
                 <input type="file" name="file">
             </div>
         </div>
     </div>
 
-    <!--<div class="tile is-ancestor fullheight">
-        <div class="tile is-vertical is-10">
-            <div class="tile is-parent">
-                <article class="tile is-child box">
-                    <dir id="map"></dir>
-                </article>
-            </div>
-            <div class="tile is-parent">
-                <article class="tile is-child box osvg">
-                    <svg id="lineChart"></svg>
-                </article>
-            </div>
-        </div>
-        <div class="tile is-parent">
-            <article class="tile is-child box">
-                <input type="file" name="file">
-            </article>
-        </div>
-    </div> -->
     <script src="./js/lib/leaflet.js"></script>
     <script src="./js/lib/d3.min.js"></script>
     <script src="./js/lib/vue.js"></script>
