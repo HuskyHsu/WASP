@@ -42,22 +42,38 @@
                 data[index] = sitegrid;
             });
 
+            //存放至全域變數
             window.data = data;
-            window.data.max = d3.max(data, function (d) {
-                return d3.max(d, function (dd) {
-                    return dd[vm.type]
+            //儲存底泥與水體的最大值
+            window.data.max = {
+                S: d3.max(data, function (d) {
+                    return d3.max(d, function (dd) {
+                        return dd.S
+                    })
+                }),
+                W: d3.max(data, function (d) {
+                    return d3.max(d, function (dd) {
+                        return dd.W
+                    })
                 })
-            });
-            window.data.colmap = d3.scaleLinear()
-                .domain([0, window.data.max])
-                .range(['#FFFF6F', '#006000']);
+            };
+            //儲存color map
+            window.data.colmap = {
+                S: d3.scaleLinear()
+                    .domain([0, window.data.max.S])
+                    .range(['#FFFF6F', '#006000']),
+                W: d3.scaleLinear()
+                .domain([0, window.data.max.W])
+                .range(['#FFFF6F', '#006000'])
+            };
+
 
             window.chart = new window.Charts.line({data: data});
             window.chart.draw(vm.site);
             window.mapObj.SKCGroup.eachLayer(function(circle) {
                 circle.setStyle({
                     fillOpacity: 1,
-                    fillColor: window.data.colmap(data[0][circle._index][vm.type])
+                    fillColor: window.data.colmap[vm.type](data[0][circle._index][vm.type])
                 });
 
                 if (circle._index == 31){
@@ -94,12 +110,12 @@
                     var context = canvas.getContext("2d");
                     context.textAlign = "center";
 
-                    var max = window.data.max;
+                    var max = window.data.max[vm.type];
 
                     for (var i = 0; i < 100; i++) {
                         context.beginPath();
                         context.rect(i * 3 + 25, 8, 3, 30);
-                        context.fillStyle = window.data.colmap(i * max / 100);
+                        context.fillStyle = window.data.colmap[vm.type](i * max / 100);
                         //context.fillStyle = d3.interpolateViridis(i/100);
                         context.fill();
                         context.closePath();

@@ -3,26 +3,15 @@
     window.Charts = {};
 
     var line = function (info) {
-
         this.data = info.data;
-
         this.focusIndex = 0;
-
     }
 
     line.prototype.draw = function (index) {
 
-        this.max = d3.max(this.data, function(d) {
-            return d3.max(d, function(dd) {
-                return dd[vm.type]
-            })
-        });
-
-        window.data.max = this.max;
-
-        var timeSeries = this.data.reduce(function (a, b) {
-                return a.concat([b[index][vm.type]]);
-            }, []);
+        var data = this.data;
+        var thisObj = this;
+        this.max = data.max[vm.type];
 
         var osvg = document.querySelector('.osvg');
 
@@ -30,11 +19,7 @@
         var width = osvg.clientWidth - margin.left - margin.right - 10;
         var height = osvg.clientHeight - margin.top - margin.bottom - 10;
 
-        var data = this.data;
-        var thisObj = this;
-
         var bisectDate = d3.bisector(function(d) { return d.time; }).left;
-
 
         var x = d3.scaleLinear()
             .domain([0, vm.type == "S" ? 30 : 1])
@@ -46,8 +31,8 @@
             .range([height, 0]);
 
         var line = d3.line()
-            .x(function (d, i) { return x(data[i].time); })
-            .y(function (d) { return y(d); });
+            .x(function (d) { return x(d.time); })
+            .y(function (d) { return y(d[index][vm.type]); });
 
         d3.select('#lineChart').remove();
         var svg = d3.select('.osvg').append("svg")
@@ -59,7 +44,7 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         g.append("path")
-            .datum(timeSeries)
+            .datum(data)
             .attr("class", "line")
             .attr("d", line);
 
@@ -85,11 +70,6 @@
             .attr("dy", "0.71em")
             .style("text-anchor", "end")
             .text(vm.type == "S" ? '底泥銅濃度(ppm)' : '水體銅濃度(ppb)');
-
-        g.append("path")
-            .datum(timeSeries)
-            .attr("class", "line")
-            .attr("d", line);
 
         var focus = svg.append("g")
             .attr("class", "focus")
@@ -117,13 +97,20 @@
                 t = x0 - d0.time > d1.time - x0 ? (i - 1) : i;
             focus.attr("transform", "translate(" + (x(d.time) + margin.left) + "," + (y(d[index][vm.type]) + margin.top) + ")");
 
+            var col = window.data.colmap[vm.type];
+
             window.mapObj.SKCGroup.eachLayer(function(circle) {
                 circle.setStyle({
-                    fillColor: window.data.colmap(d[circle._index][vm.type])
+                    fillColor: col(d[circle._index][vm.type])
                 });
             });
 
             thisObj.focusIndex = t == i ? t - 1 : t + 1;
+
+            var day = Math.floor(d.time);
+            var hour = Math.floor((d.time - day)*24);
+            var minute = Math.round((d.time - day - hour/24)*24*60);
+            vm.showTime = day + '天' + hour + '小時' + minute + '分';
 
         }
 

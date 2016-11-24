@@ -61,7 +61,7 @@
 
             this.setStyle({ color: 'red' });
             vm.site = circle._index;
-            window.chart.draw(vm.site, window.chart.focusIndex);
+            window.chart.draw(vm.site);
         });
 
         circle.addTo(SKCGroup);
