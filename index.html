@@ -56,6 +56,23 @@
         fill: red;
     }
 
+    .fileUpload {
+        position: relative;
+        overflow: hidden;
+        margin-top: -10px;
+    }
+    .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
     </style>
 </head>
 
@@ -72,12 +89,24 @@
         </div>
         <div class="tile is-parent r100">
             <div class="tile is-child box">
-                <input type="file" name="file">
+
+                <p class="title">WASP模式<br>結果展示</p>
+                <p class="subtitle">三塊厝流域</p>
+                <br>
+
+                <p class="subtitle">1. 解析模式輸出檔案</p>
+                <div class="fileUpload button is-info">
+                    <span>選擇檔案</span>
+                    <input type="file" name="file" class="upload" />
+                </div>
+                <!-- <input type="file" name="file"> -->
+                <br>
                 <a href="./test/Total_Concentration1122.csv">測試資料下載</a>
                 <br><br>
+                 <p class="subtitle">2. 選擇類別</p>
                 <div id="showType">
                     <form>
-                        <label for="W">顯示類別：</label><br>
+                        <!-- <label for="W">顯示類別：</label><br> -->
                         <input type="radio" id="S" value="S" v-model="type">
                         <label for="S">底泥</label><br>
                         <input type="radio" id="W" value="W" v-model="type">
@@ -87,6 +116,17 @@
                     <label >顯示時間：</label><br>
                     {{ showTime }}
                 </div>
+
+                <hr>
+                <article class="message is-primary">
+                    <div class="message-header">
+                        介紹標題
+                    </div>
+                    <div class="message-body">
+                        介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文介紹內文
+                    </div>
+                </article>
+
 
             </div>
         </div>
