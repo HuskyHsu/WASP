@@ -12,7 +12,7 @@
         //var type = file.type;
 
         //NO CSV!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (!file.type.match(/application\/vnd.ms-excel|application\/csv|text\/csv/)) {
+        if (!file.type.match(/application\/vnd.ms-excel|application\/csv|text\/csv|text\/comma-separated-values/)) {
             return alert('格式錯誤');
         }
 
