@@ -67,20 +67,6 @@
                 .range(['#FFFF6F', '#006000'])
             };
 
-
-            window.chart = new window.Charts.line({data: data});
-            window.chart.draw(vm.site);
-            window.mapObj.SKCGroup.eachLayer(function(circle) {
-                circle.setStyle({
-                    fillOpacity: 1,
-                    fillColor: window.data.colmap[vm.type](data[0][circle._index][vm.type])
-                });
-
-                if (circle._index == 31){
-                    circle.setStyle({ color: 'red' });
-                }
-            });
-
             //colorBar
             window.colorBarControl = L.Control.extend({
                 options: {
@@ -135,8 +121,23 @@
                     return container;
                 }
             });
-
             window.mapObj.map.addControl(new window.colorBarControl());
+
+            //line chart
+            window.chart = new window.Charts.line({data: data});
+            window.chart.draw(vm.site);
+            window.mapObj.SKCGroup.eachLayer(function(circle) {
+                circle.setStyle({
+                    fillOpacity: 1,
+                    fillColor: window.data.colmap[vm.type](data[0][circle._index][vm.type])
+                });
+
+                if (circle._index == 31){
+                    circle.setStyle({ color: 'red' });
+                }
+            });
+
+
 
         };
 

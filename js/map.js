@@ -62,6 +62,10 @@
             this.setStyle({ color: 'red' });
             vm.site = circle._index;
             window.chart.draw(vm.site);
+
+            var dx = (data[window.chart.focusIndex][vm.site][vm.type] / data.max[vm.type] * 100) * 3;
+            d3.select("#colorBar rect").attr("transform", "translate(" + (dx + 23.5) + ", 8)");
+
         });
 
         circle.addTo(SKCGroup);

@@ -87,6 +87,20 @@
             .on("mouseover", function() { focus.style("display", null); })
             //.on("mouseout", function() { focus.style("display", "none"); })
             .on("mousemove", mousemove);
+
+        d3.select('#colorBar').remove();
+        var colorbar = d3.select('.colorBar')
+            .append('svg')
+            .attr('id', 'colorBar')
+            .style("position", "absolute")
+            .style("left", '0')
+            .style("top", '0')
+            .attr("width", 350)
+            .attr("height", 70)
+            .append('rect')
+            .attr("transform", "translate(23.5, 8)")
+            .attr("width", 3)
+            .attr("height", 30)
         
         function mousemove() {
             var x0 = x.invert(d3.mouse(this)[0]),
@@ -96,6 +110,9 @@
                 d = x0 - d0.time > d1.time - x0 ? d1 : d0,
                 t = x0 - d0.time > d1.time - x0 ? (i - 1) : i;
             focus.attr("transform", "translate(" + (x(d.time) + margin.left) + "," + (y(d[index][vm.type]) + margin.top) + ")");
+
+            var dx = (d[index][vm.type] / data.max[vm.type] * 100) * 3;
+            colorbar.attr("transform", "translate(" + (dx + 23.5) + ", 8)");
 
             var col = window.data.colmap[vm.type];
 
