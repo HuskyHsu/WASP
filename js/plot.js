@@ -30,9 +30,14 @@
             .domain([0, this.max])
             .range([height, 0]);
 
-        var line = d3.line()
+        // var line = d3.line()
+        //     .x(function (d) { return x(d.time); })
+        //     .y(function (d) { return y(d[index][vm.type]); });
+
+        var area = d3.area()
             .x(function (d) { return x(d.time); })
-            .y(function (d) { return y(d[index][vm.type]); });
+            .y0(function(d) { return (height) })
+            .y1(function (d) { return y(d[index][vm.type]); });
 
         d3.select('#lineChart').remove();
         var svg = d3.select('.osvg').append("svg")
@@ -43,10 +48,26 @@
         var g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        svg.append("linearGradient")
+            .attr("id", "temperature-gradient")
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", 0).attr("y1", height)
+            .attr("x2", 0).attr("y2", 0)
+            .selectAll("stop")
+            .data([
+                { offset: "0%", color: '#FFFF6F' },
+                { offset: "100%", color: '#006000' }
+            ])
+            .enter().append("stop")
+            .attr("offset", function(d) {
+                return d.offset; })
+            .attr("stop-color", function(d) {
+                return d.color; });
+
         g.append("path")
             .datum(data)
-            .attr("class", "line")
-            .attr("d", line);
+            .attr("class", "area")
+            .attr("d", area);
 
         g.append("g")
             .attr("class", "axis axis--x")
