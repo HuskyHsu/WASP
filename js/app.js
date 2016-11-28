@@ -3,7 +3,8 @@ var vm = new Vue({
     data: {
         type: 'S',
         site: 31,
-        showTime: '0天0小時0分'
+        showTime: '0天0小時0分',
+        WSill: 100
     },
     watch: {
     	type: function (val) {

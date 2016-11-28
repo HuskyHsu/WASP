@@ -24,6 +24,10 @@
             data = data.slice(1, data.length - 1);
 
             var head = 32;
+
+            var overSillTime = new Array(32);
+            overSillTime.fill(null)
+
             data.forEach(function(item, index) {
                 var tem = data[index].split(',');
                 tem.forEach(function(item_, index_) {
@@ -33,6 +37,17 @@
 
                 var sitegrid = [];
                 for (var i = 1; i <= head; i++) {
+
+                    if (tem[i] >= vm.WSill && overSillTime[i - 1] === null){
+
+                        var day = Math.floor(tem[0]);
+                        var hour = Math.floor((tem[0] - day)*24);
+                        var minute = Math.round((tem[0] - day - hour/24)*24*60);
+
+                        overSillTime[i - 1] = '水體銅離子濃度於 ' + day + '天' + hour + '小時' + minute + '分，超越門檻值。';
+
+                    }
+
                     sitegrid.push({ S: tem[i + head], W: tem[i] });
                 }
 
@@ -66,6 +81,8 @@
                 .domain([0, window.data.max.W])
                 .range(['#FFFF6F', '#006000'])
             };
+            //水體濃度超過標準時的時間
+            window.data.overSillTime = overSillTime;
 
             //colorBar
             window.colorBarControl = L.Control.extend({
@@ -131,6 +148,8 @@
                     fillOpacity: 1,
                     fillColor: window.data.colmap[vm.type](data[0][circle._index][vm.type])
                 });
+
+                circle.bindPopup(overSillTime[circle._index] || '濃度未超過門檻值。')
 
                 if (circle._index == 31){
                     circle.setStyle({ color: 'red' });
