@@ -126,7 +126,6 @@
             ]);
 
 
-
     var SKCGroup = new L.LayerGroup();
     var SankuaicuoGridPoint = [];
     SankuaicuoGridPoint.forEach(function (item, index) {
