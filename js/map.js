@@ -7,7 +7,7 @@
             attribution : 'Map data: &copy; Google'
         });
 
-    var topography = L.tileLayer('https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}', {
+    var satellite = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             id : 'topography',
             subdomains : "012",
             attribution : 'Map data: &copy; Google'
@@ -16,7 +16,7 @@
     //群組
     var baseMaps = {
         "Google地圖" : streets,
-        "地形" : topography
+        "Google衛星影像" : satellite
     };
 
     var geoData = {
@@ -61,7 +61,7 @@
             { "type": "Feature", "properties": { "name": "四給", "id": 3, "pid": 29 }, "geometry": { "type": "LineString", "coordinates": [ ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 4, "pid": 30 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66875305678042, 24.088678149339465 ], [ 120.66847513262992, 24.088666378773205 ], [ 120.66831181637657, 24.088607525925685 ], [ 120.66825594502673, 24.088568290679 ], [ 120.66814563492578, 24.08854736520917 ], [ 120.66781327202419, 24.088434890750388 ], [ 120.66741214438433, 24.088374729952832 ], [ 120.66733621665252, 24.088498975047134 ] ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 5, "pid": 31 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66873407484739, 24.088704960069673 ], [ 120.6687519823313, 24.088677822379296 ] ] } },
-            { "type": "Feature", "properties": { "name": "二給", "id": null, "pid": null }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66880104883721, 24.088624854822474 ], [ 120.6687516241816, 24.088677168458968 ] ] } },
+            { "type": "Feature", "properties": { "name": "二給", "id": null, "pid": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66880104883721, 24.088624854822474 ], [ 120.6687516241816, 24.088677168458968 ] ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 6, "pid": 32 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66733636628403, 24.088499677904917 ], [ 120.66723593474248, 24.088460720649337 ], [ 120.66707834888398, 24.088477722605319 ], [ 120.66686918947175, 24.088438487318871 ], [ 120.66672306440297, 24.088438487318871 ], [ 120.66666719305313, 24.088494724559034 ], [ 120.66663567588144, 24.088531344144002 ], [ 120.66661418690072, 24.088564040193177 ], [ 120.6663147737696, 24.088527420617549 ] ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 7, "pid": 33 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66630904337471, 24.088530036301876 ], [ 120.66624314383387, 24.088523497090968 ], [ 120.66602538882941, 24.088448950063107 ], [ 120.66592653951815, 24.088433255946438 ], [ 120.66569732372396, 24.088387481428565 ], [ 120.66566437395355, 24.088384865741336 ], [ 120.66535063483524, 24.088361324553862 ] ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 8, "pid": 34 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66534633703913, 24.08836328631963 ], [ 120.66517585779219, 24.08836982553871 ], [ 120.66487930985845, 24.088394674568157 ], [ 120.66474607817807, 24.088412984376252 ], [ 120.66463576807712, 24.088335821595869 ] ] } },
@@ -71,9 +71,9 @@
             { "type": "Feature", "properties": { "name": "四給", "id": 12, "pid": 38 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66133506064062, 24.087679282161393 ], [ 120.66091960701364, 24.087718517680258 ] ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 13, "pid": 39 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.66091101142139, 24.087718517680258 ], [ 120.66078494273457, 24.087726364782593 ], [ 120.66063881766578, 24.087744674686167 ], [ 120.6605070185841, 24.087765600287046 ], [ 120.6602863983822, 24.087799604381178 ], [ 120.66015746449796, 24.087823145671841 ], [ 120.65995690067805, 24.087844071259909 ], [ 120.65985661876807, 24.087851918354559 ], [ 120.65961594218416, 24.087893769517869 ], [ 120.65936667000798, 24.087935620667515 ], [ 120.65928930967745, 24.087953930541193 ], [ 120.65908015026523, 24.088006244451563 ] ] } },
             { "type": "Feature", "properties": { "name": "四給", "id": 14, "pid": 40 }, "geometry": { "type": "LineString", "coordinates": [ [ 120.65907441987036, 24.088008860146527 ], [ 120.658951216381, 24.088032401398742 ], [ 120.65860166229486, 24.088100409436425 ], [ 120.65825210820871, 24.088016707231084 ] ] } },
-            { "type": "Feature", "properties": { "name": "四給", "id": null, "pid": null }, "geometry": { "type": "LineString", "coordinates": [ ] } }
+            { "type": "Feature", "properties": { "name": "四給", "id": null, "pid": "" }, "geometry": { "type": "LineString", "coordinates": [ ] } }
             ]
-            }
+            }            
     };
 
 
@@ -97,8 +97,18 @@
     //     }
     // });
 
+
     // 線
-    var TaichungGrid = L.geoJson(geoData.TaichungGrid, {});
+    var TaichungGrid = L.geoJson(geoData.TaichungGrid, {
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+        },
+
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup("網格編號：" + feature.properties.pid.toString());
+        }
+    })
+
 
     //點
     // var SankuaicuoRiver = setGeoJson(geoData.SankuaicuoRiverWeir, WeirIcon);
@@ -117,49 +127,49 @@
         "台中詹厝園圳":TaichungGrid
     };
 
-
     var map = L.map('map', {
-            layers : [streets, TaichungGrid]
-        }).fitBounds([
-                [24.07, 120.63],
-                [24.1, 120.7]
-            ]);
+        layers : [streets, TaichungGrid]
+    }).fitBounds([
+            [24.07, 120.63],
+            [24.1, 120.7]
+        ]);
 
+    map.fitBounds(TaichungGrid.getBounds().pad(0.2));
 
-    var SKCGroup = new L.LayerGroup();
-    var SankuaicuoGridPoint = [];
-    SankuaicuoGridPoint.forEach(function (item, index) {
+    // var SKCGroup = new L.LayerGroup();
+    // var SankuaicuoGridPoint = [];
+    // SankuaicuoGridPoint.forEach(function (item, index) {
 
-        var circle = L.circle([item[1], item[0]], {
-                color : 'black',
-                weight : 2,
-                fillOpacity : 0,
-                radius : 50
-            }); //.bindPopup((index + 1).toString())
+    //     var circle = L.circle([item[1], item[0]], {
+    //             color : 'black',
+    //             weight : 2,
+    //             fillOpacity : 0,
+    //             radius : 50
+    //         }); //.bindPopup((index + 1).toString())
 
-        circle._index = index;
+    //     circle._index = index;
 
-        circle.on("click", function (event) {
+    //     circle.on("click", function (event) {
 
-            SKCGroup.eachLayer(function(circle) {
-                circle.setStyle({
-                    color: 'black'
-                });
-            });
+    //         SKCGroup.eachLayer(function(circle) {
+    //             circle.setStyle({
+    //                 color: 'black'
+    //             });
+    //         });
 
-            this.setStyle({ color: 'red' });
-            vm.site = circle._index;
-            window.chart.draw(vm.site);
+    //         this.setStyle({ color: 'red' });
+    //         vm.site = circle._index;
+    //         window.chart.draw(vm.site);
 
-            var dx = (data[window.chart.focusIndex][vm.site][vm.type] / data.max[vm.type] * 100) * 3;
-            d3.select("#colorBar rect").attr("transform", "translate(" + (dx + 23.5) + ", 8)");
+    //         var dx = (data[window.chart.focusIndex][vm.site][vm.type] / data.max[vm.type] * 100) * 3;
+    //         d3.select("#colorBar rect").attr("transform", "translate(" + (dx + 23.5) + ", 8)");
 
-        });
+    //     });
 
-        circle.addTo(SKCGroup);
-    })
+    //     circle.addTo(SKCGroup);
+    // })
 
-    SKCGroup.addTo(map);
+    // SKCGroup.addTo(map);
 
     L.control.layers(baseMaps, overlayMaps).addTo(map);
 
@@ -168,11 +178,9 @@
     window.mapObj = new Vue({
         data: {
             map: map,
-            SKCGroup: SKCGroup
+            TaichungGrid: TaichungGrid
         }
     })
-
-
 
 
     //取得Icon

@@ -88,11 +88,37 @@
             </div>
         </div>
         <div class="tile is-parent r100">
-            <div class="tile is-child box">
+            <div class="tile is-child box" id="showType">
 
                 <p class="title">WASP模式<br>結果展示</p>
                 <p class="subtitle">重金屬汙染時空分布</p>
                 <br>
+
+                <div class="field">
+                    <label class="label">區域選擇</label>
+                    <div class="control">
+                        <div class="select">
+                            <select v-model="area" @change="changeArea()">
+                                <option>桃園 - 三塊厝</option>
+                                <option>臺中 - 詹厝園圳</option>
+                                <option>彰化 - 新圳</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">顯示狀態</label>
+                    <div class="control">
+                        <div class="select">
+                            <select v-model="scenario" @change="changeScenario()">
+                                <option>渠道網格</option>
+                                <option>情境一</option>
+                                <option>情境二</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
 
 
@@ -104,8 +130,9 @@
     <script src="./js/lib/d3.min.js"></script>
     <script src="./js/lib/vue.js"></script>
     <script src="./js/map.js"></script>
-    <script src="./js/readCSV.js"></script>
-    <script src="./js/plot.js"></script>
+    <script src="./js/Taichung.js"></script>
+    <!-- <script src="./js/readCSV.js"></script> -->
+    <!-- <script src="./js/plot.js"></script> -->
 
     <script src="./js/app.js"></script>
 </body>
