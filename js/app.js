@@ -30,7 +30,7 @@ var vm = new Vue({
     el: '#showType',
     data: {
         area: "臺中 - 詹厝園圳",
-        scenario: "渠道網格"
+        scenario: "渠道網格",
     },
     methods: {
         changeArea(rowId, event) {
@@ -39,16 +39,25 @@ var vm = new Vue({
             }
         },
         changeScenario(rowId, event) {
-            if (this.scenario == "情境一"){
-                window.mapObj.TaichungGrid.eachLayer(function(Grid) {
-                    if (this.area == "臺中 - 詹厝園圳"){
-                        TaichungScenario[this.scenario]
-
-                    }
-                    Grid.setStyle({
-                        color: 'red'
-                    });
+            if (this.area == "臺中 - 詹厝園圳"){
+                var scenario = TaichungScenario[this.scenario]
+                var max = 0;
+                Object.keys(scenario).map(function(objectKey, index) {
+                    var value = scenario[objectKey];
+                    max = value > max ? value : max;
                 });
+
+                var colmap = window.colmap.W;
+                colmap.domain([0, max]);
+
+                window.mapObj.TaichungGrid.eachLayer(function(layer) {
+
+                    layer.setStyle({
+                        color: colmap(scenario[layer.pid.toString()])
+                    })
+                    
+                });
+                
             }
             
         }
@@ -56,8 +65,8 @@ var vm = new Vue({
 })
 
 window.colmap = {
-    T: d3.scaleLinear()
+    W: d3.scaleLinear()
         .range(['#FFFF6F', '#006000']),
-    C: d3.scaleLinear()
-    .range(['#FFFF6F', '#006000'])
+    S: d3.scaleLinear()
+        .range(['#FFFF6F', '#006000'])
 };

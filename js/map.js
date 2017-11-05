@@ -100,12 +100,13 @@
 
     // 線
     var TaichungGrid = L.geoJson(geoData.TaichungGrid, {
-        pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-        },
+        // pointToLayer: function (feature, latlng) {
+        //     return L.circleMarker(latlng, geojsonMarkerOptions);
+        // },
 
         onEachFeature: function (feature, layer) {
             layer.bindPopup("網格編號：" + feature.properties.pid.toString());
+            layer.pid = feature.properties.pid;
         }
     })
 
