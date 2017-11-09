@@ -25,7 +25,7 @@
         margin: 0;
     }
     
-    .r100 { height: calc(100VH - 25px); }
+    .r100 { height: calc(100VH - 50px); }
     .r70 { height: calc(70VH - 35px); }
     .r60 { height: calc(60VH - 35px); }
     .r50 { height: calc(50VH - 35px); }
@@ -80,12 +80,12 @@
 
     <div class="tile is-ancestor r100">
         <div class="tile is-10 is-vertical is-parent r100">
-            <div class="tile is-child box r70">
+            <div class="tile is-child box r100">
                 <dir id="map"></dir>
             </div>
-            <div class="tile is-child box r30 osvg">
+            <!-- <div class="tile is-child box r30 osvg">
                 <svg id="lineChart"></svg>
-            </div>
+            </div> -->
         </div>
         <div class="tile is-parent r100">
             <div class="tile is-child box" id="showType">
@@ -131,6 +131,7 @@
     <script src="./js/lib/vue.js"></script>
     <script src="./js/map.js"></script>
     <script src="./js/Taichung.js"></script>
+    <script src="./js/Changhua.js"></script>
     <!-- <script src="./js/readCSV.js"></script> -->
     <!-- <script src="./js/plot.js"></script> -->
 

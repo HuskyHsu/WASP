@@ -26,6 +26,25 @@
 //   	}
 // })
 
+var setScenario = function(scenario, gridObj){
+    var max = 0;
+    Object.keys(scenario).map(function(objectKey, index) {
+        var value = scenario[objectKey];
+        max = value > max ? value : max;
+    });
+
+    var colmap = window.colmap.W;
+    colmap.domain([0, max]);
+
+    gridObj.eachLayer(function(layer) {
+
+        layer.setStyle({
+            color: colmap(scenario[layer.pid.toString()])
+        })
+        
+    });
+}
+
 var vm = new Vue({
     el: '#showType',
     data: {
@@ -36,30 +55,19 @@ var vm = new Vue({
         changeArea(rowId, event) {
             if (this.area == "臺中 - 詹厝園圳"){
                 window.mapObj.map.fitBounds(window.mapObj.TaichungGrid.getBounds().pad(0.2));
+                setScenario(TaichungScenario[this.scenario], window.mapObj.TaichungGrid)
+            } else if (this.area == "彰化 - 新圳"){
+                window.mapObj.map.fitBounds(window.mapObj.ChanghuaGrid.getBounds().pad(0.2));
+                setScenario(ChanghuaScenario[this.scenario], window.mapObj.ChanghuaGrid)      
             }
         },
         changeScenario(rowId, event) {
             if (this.area == "臺中 - 詹厝園圳"){
-                var scenario = TaichungScenario[this.scenario]
-                var max = 0;
-                Object.keys(scenario).map(function(objectKey, index) {
-                    var value = scenario[objectKey];
-                    max = value > max ? value : max;
-                });
-
-                var colmap = window.colmap.W;
-                colmap.domain([0, max]);
-
-                window.mapObj.TaichungGrid.eachLayer(function(layer) {
-
-                    layer.setStyle({
-                        color: colmap(scenario[layer.pid.toString()])
-                    })
-                    
-                });
-                
+                setScenario(TaichungScenario[this.scenario], window.mapObj.TaichungGrid)
             }
-            
+            if (this.area == "彰化 - 新圳"){
+                setScenario(ChanghuaScenario[this.scenario], window.mapObj.ChanghuaGrid)                
+            }
         }
     }
 })
