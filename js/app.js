@@ -27,6 +27,17 @@
 // })
 
 var setScenario = function(scenario, gridObj){
+
+    if (typeof(scenario) == "undefined") {
+        gridObj.eachLayer(function (layer) {
+            layer.setStyle({
+                color: "rgb(51, 136, 255)"
+            })
+
+        });
+        return 0
+    }
+
     var max = 0;
     Object.keys(scenario).map(function(objectKey, index) {
         var value = scenario[objectKey];
@@ -34,7 +45,8 @@ var setScenario = function(scenario, gridObj){
     });
 
     var colmap = window.colmap.W;
-    colmap.domain([0, max]);
+    colmap.domain([0, 300]);
+    // colmap.domain([0, max]);
 
     gridObj.eachLayer(function(layer) {
 
@@ -78,3 +90,15 @@ window.colmap = {
     S: d3.scaleLinear()
         .range(['#FFFF6F', '#006000'])
 };
+
+
+d3.select('#colorBar').remove();
+var colorbar = d3.select('.colorBar')
+    .append('svg')
+    .attr('id', 'colorBar')
+    .attr("width", 200)
+    .attr("height", 70)
+    // .append('rect')
+    // .attr("transform", "translate(23.5, 8)")
+    // .attr("width", 3)
+    // .attr("height", 30)
